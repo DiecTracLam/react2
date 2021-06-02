@@ -70,27 +70,7 @@ function App() {
   };
   return (
     <AppStyled>
-      <h1 className="title">Game Lat Mat</h1>
-      <Timeline count={countFlip}/>
-      <div class="list-card">
-        {data.map((element, index) => {
-          return (
-            <div key={element.id} className="card">
-              <Cart
-                image={element.image}
-                handOnclickCard={() => handOnclick(element)}
-                currentChoose={
-                  currentChoose[0]?.id === element.id ||
-                  currentChoose[1]?.id === element.id
-                    ? true
-                    : false
-                }
-                isDone={listDOne.findIndex((doneItem) => doneItem=== element.id)===-1?false:true}
-              />
-            </div>
-          );
-        })}
-      </div>
+      
       {/* <NewComponent/> */}
     </AppStyled>
   );
