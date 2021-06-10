@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import "./App.css";
 import { useEffect, useState } from "react";
-import Statical from "./Components/Statical.js";
+import Statical from "./Components/statical.js";
 import Chart from "./Components/Chart";
+import { findAllByDisplayValue } from "@testing-library/dom";
 // import { NewComponent } from "./Components/NewComponents";
 
 const AppStyled = styled.div`
@@ -35,7 +36,7 @@ const AppStyled = styled.div`
 function App() {
   const [country, setCountry] = useState([]);
   const [data, setData] = useState([]);
-  const [changeCountry, setChange] = useState({});
+  const [changeCountry, setChange] = useState(false);
     useEffect(() => {
     const fetchData = async () => {
       const countryData = await fetch(
@@ -53,6 +54,10 @@ function App() {
   function change(e){
     let find1=country.countries.findIndex((data)=>data.name === e.target.value)
     let find2=data.findIndex(data=>data.countryRegion === e.target.value)
+    if(find1 === -1 || find2 === -1){
+      setChange(false);
+      return ;
+    }
     setChange({...country.countries[find1],...data[find2]})
   }
   return (
@@ -73,7 +78,10 @@ function App() {
             })
           : ""}
       </select>
-      <Chart recover={changeCountry.recovered} Infected={changeCountry.confirmed} death={changeCountry.deaths}/>
+      {
+        Boolean(changeCountry) ? 
+      <Chart recover={changeCountry.recovered} Infected={changeCountry.confirmed} death={changeCountry.deaths}/> : null
+      }
     </AppStyled>
   );
 }
