@@ -2,7 +2,6 @@ import styled from "styled-components";
 import "./App.css";
 import Header from "./Components/Header";
 import Main from "./Components/Main";
-import Bottom from "./Components/Bottom";
 import { useState } from "react";
 
 const AppStyled = styled.div`
@@ -22,7 +21,6 @@ function App() {
     <AppStyled>
       <Header onchange={searchChange}/>
       <Main searchValue={searchValue}/>
-      <Bottom/>
     </AppStyled>
   );
 }

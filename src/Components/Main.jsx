@@ -1,18 +1,21 @@
 import React from "react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
+import Paging from "./Paging";
 import Item from "./Item";
 const MainBD = styled.div`
   max-width: 1200px;
   width: 100%;
   margin: auto;
   height: 100%;
-  padding: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
+  /* justify-content: space-around; */
+  .container-list{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 1rem;
+  }
   .container-item {
-    width: 30%;
+    flex:0 1 30%;
     background-color: #7378c5;
     cursor: pointer;
     margin: 1rem;
@@ -21,6 +24,7 @@ const MainBD = styled.div`
   }
   .item-overview {
     position: relative;
+    overflow: hidden;
   }
   .img-size {
     width: 100%;
@@ -32,7 +36,7 @@ const MainBD = styled.div`
     bottom: 0;
     background-color: white;
     transform: translateY(100%);
-    opacity: 0;
+    /* opacity: 0; */
     transition: all 0.4s linear;
     padding: 0 10px;
     .overview-title {
@@ -42,10 +46,11 @@ const MainBD = styled.div`
     }
     p {
       font-size: 1.5rem;
+      margin-bottom: 12px;
     }
   }
   .item-overview:hover .overview {
-    opacity: 1;
+    /* opacity: 1; */
     transform: translateY(0);
   }
   .title {
@@ -55,7 +60,7 @@ const MainBD = styled.div`
   }
   @media screen and (min-width: 599px) and (max-width: 767px) {
     .container-item {
-      width: 45%;
+      flex:1 0 45%;
       overflow: hidden;
     }
     .item-overview:hover .overview {
@@ -70,9 +75,11 @@ const MainBD = styled.div`
     }
   }
   @media screen and (max-width: 376px) {
+    justify-content: center;
     .container-item {
-      width: 80%;
+      flex:0 0 80%;
       overflow: hidden;
+      
     }
     .item-overview:hover .overview {
       overflow: scroll;
@@ -87,56 +94,59 @@ function Main({ searchValue }) {
   const API_popular = romain +`/discover/movie?sort_by=popularity.desc&page=${page}&` +key_primary;
   const IMG_URL = "https://image.tmdb.org/t/p/w500/";
   const search_URL = romain + "/search/movie?" + key_primary;
-  const [API_URL, setAPI] = useState("");
+  const [API_URL, setAPI] = useState(false);
   useEffect(() => {
-    let changeList = () => {
-      console.log(searchValue);
-      if (searchValue === "") return;
-      const getAPi = async () => {
-        const Api = await fetch(search_URL + `&query=${searchValue}`);
-        let tamp = await Api.json();
-        console.log(" 233");
-        console.log("i++");
-        // console.log(tamp)
-        // console.log(tamp)
-        // console.log(API_URL)
-        if ((JSON.stringify(tamp) === JSON.stringify(API_URL)) === false) {
-          console.log(JSON.stringify(tamp) === JSON.stringify(API_URL));
-          setAPI(tamp);
-        }
+    if(API_URL == false){
+      console.log("false")
+      const fetApi = async () => {
+        const Api = await fetch(API_popular);
+        setAPI(await Api.json());
       };
-      getAPi();
-    };
-    changeList();
+      fetApi();
+    }
+    else{
+      let changeList = () => {
+        console.log(searchValue);
+        if (searchValue === "") return;
+        const getAPi = async () => {
+          const Api = await fetch(search_URL + `&query=${searchValue}`);
+          let tamp = await Api.json();
+          console.log(" 233");
+          console.log("i++");
+          if ((JSON.stringify(tamp) === JSON.stringify(API_URL)) === false) {
+            console.log(JSON.stringify(tamp) === JSON.stringify(API_URL));
+            setAPI(tamp);
+          }
+        };
+        getAPi();
+      };
+      changeList();
+    }
   }, [searchValue]);
-  useEffect(() => {
-    const fetApi = async () => {
-      const Api = await fetch(API_popular);
-      setAPI(await Api.json());
-    };
-    fetApi();
-  }, []);
   console.log(
     "============================================================================="
   );
   console.log(API_URL);
   return (
-    <MainBD>
-      {API_URL
-        ? API_URL.results.map((item, index) => {
-            if (item.poster_path != null) {
-              return (
-                <Item
-                  key={index}
-                  title={item.title}
-                  overview={item.overview}
-                  image={IMG_URL + item.poster_path}
-                />
-              );
-            }
-          })
-        : null}
-    </MainBD>
+      <MainBD>
+        <div className="container-list">
+          {API_URL
+            ? API_URL.results.map((item, index) => {
+                if (item.poster_path != null) {
+                  return (
+                    <Item
+                      key={index}
+                      title={item.title}
+                      overview={item.overview}
+                      image={IMG_URL + item.poster_path}
+                    />
+                  );
+                }
+              })
+            : null}
+        </div>
+        <Paging count={API_URL?API_URL.total_pages:0}/>
+      </MainBD>
   );
 }
 
