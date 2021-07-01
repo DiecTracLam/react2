@@ -11,7 +11,9 @@ const AppStyled = styled.div`
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  background-color:#f1eeee ;
+  background-color: #f1eeee;
+  min-height: 100vh;
+  height: 100%;
   .Img-title {
     margin-top: 50px;
   }
@@ -37,7 +39,7 @@ function App() {
   const [country, setCountry] = useState([]);
   const [data, setData] = useState([]);
   const [changeCountry, setChange] = useState(false);
-    useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       const countryData = await fetch(
         "https://covid19.mathdro.id/api/countries"
@@ -51,14 +53,16 @@ function App() {
   // console.log(country.countries);
   // console.log(data)
   // console.log(changeCountry)
-  function change(e){
-    let find1=country.countries.findIndex((data)=>data.name === e.target.value)
-    let find2=data.findIndex(data=>data.countryRegion === e.target.value)
-    if(find1 === -1 || find2 === -1){
+  function change(e) {
+    let find1 = country.countries.findIndex(
+      (data) => data.name === e.target.value
+    );
+    let find2 = data.findIndex((data) => data.countryRegion === e.target.value);
+    if (find1 === -1 || find2 === -1) {
       setChange(false);
-      return ;
+      return;
     }
-    setChange({...country.countries[find1],...data[find2]})
+    setChange({ ...country.countries[find1], ...data[find2] });
   }
   return (
     <AppStyled>
@@ -69,19 +73,30 @@ function App() {
           alt="img"
         />
       </div>
-      <Statical recover={changeCountry.recovered} Infected={changeCountry.confirmed} death={changeCountry.deaths}/>
+      <Statical
+        recover={changeCountry.recovered}
+        Infected={changeCountry.confirmed}
+        death={changeCountry.deaths}
+      />
       <select className="list-item" onChange={change}>
         <option value="United State">United State</option>
         {country.countries
           ? country.countries.map((item, index) => {
-              return <option key={index} value={item.name}>{item.name}</option>;
+              return (
+                <option key={index} value={item.name}>
+                  {item.name}
+                </option>
+              );
             })
           : ""}
       </select>
-      {
-        Boolean(changeCountry) ? 
-      <Chart recover={changeCountry.recovered} Infected={changeCountry.confirmed} death={changeCountry.deaths}/> : null
-      }
+      {Boolean(changeCountry) ? (
+        <Chart
+          recover={changeCountry.recovered}
+          Infected={changeCountry.confirmed}
+          death={changeCountry.deaths}
+        />
+      ) : null}
     </AppStyled>
   );
 }
